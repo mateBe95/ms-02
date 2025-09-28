@@ -1,1 +1,4 @@
 node_modules/
+build
+.react-router/
+@react-router/dev/
