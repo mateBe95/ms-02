@@ -23,7 +23,7 @@ const Sidebar: React.FC = () => {
         items={[
           { key: '/', icon: <UserOutlined />, label: <Link to="/">Strona główna</Link> },
           { key: '/upload', icon: <UploadOutlined />, label: <Link to="/upload">Dodaj plik</Link> },
-          { key: '/documents', icon: <FilePdfOutlined />, label: <Link to="/documents">Przesłane pliki</Link> },
+          { key: '/documents', icon: <FilePdfOutlined />, label: <Link to="/documents">Przesłane dokumenty</Link> },
           { key: '/settings', icon: <SettingOutlined />, label: <Link to="/settings">Ustawienia</Link> },
 
         ]}
