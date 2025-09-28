@@ -1,3 +1,4 @@
+import DocumentsTableComponent from "~/components/DocumentsTable/DocumentsTable";
 import type { Route } from "./+types/home";
 
 export function meta({ }: Route.MetaArgs) {
@@ -8,5 +9,6 @@ export function meta({ }: Route.MetaArgs) {
 }
 
 export default function Test() {
-    return <div>Test</div>
+    return <DocumentsTableComponent />
 }
+

@@ -9,6 +9,6 @@ export function meta({ }: Route.MetaArgs) {
 
 export default function Settings() {
     return <div>
-        <h1>Settings</h1>
+        <h1>Ustawienia</h1>
     </div>;
 }
