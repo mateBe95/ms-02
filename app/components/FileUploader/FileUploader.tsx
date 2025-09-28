@@ -146,22 +146,12 @@ const FileUploadComponent = () => {
             Kliknij lub przeciągnij pliki do tego obszaru aby je przesłać
           </p>
           <p className="ant-upload-hint">
-            Obsługiwane formaty: JPG, PNG, PDF, TXT, DOCX (max 10MB)
+            Obsługiwane formaty: PDF, TXT, DOCX (max 10MB)
           </p>
         </Dragger>
 
         {/* Upload Controls */}
-        <Space className="mb-4">
-          <Button 
-            type="primary" 
-            onClick={handleUpload}
-            disabled={fileList.length === 0}
-            loading={uploading}
-            icon={<UploadOutlined />}
-          >
-            {uploading ? 'Przesyłanie...' : 'Prześlij wszystkie'}
-          </Button>
-          
+        <Space className="mb-4 mt-4">
           <Button 
             onClick={clearAll}
             disabled={fileList.length === 0}
