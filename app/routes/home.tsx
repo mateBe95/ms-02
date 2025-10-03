@@ -4,6 +4,8 @@ import { ThumbsUp, MessageSquare, AlertCircle, FileText, User, Star, Send, Edit3
 import { DatasetCard } from "~/components/DatasetCard/DatasetCard";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import { ReviewCard } from "~/components/ReviewCard/ReviewCard";
+import { SuggestionCard } from "~/components/SuggestionCard/SuggestionCard";
 export function meta({ }: Route.MetaArgs) {
   return [
     { title: "New React Router App" },
@@ -75,6 +77,7 @@ export default function Home() {
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [userRole, setUserRole] = useState('user');
+  const [search, setSearch] = useState("");
 
   const [newComment, setNewComment] = useState('');
   const [newSuggestion, setNewSuggestion] = useState<NewSuggestion>({ title: '', description: '', type: 'improvement' });
@@ -86,6 +89,11 @@ export default function Home() {
       return res.data.data;
     },
   });
+  const filteredDatasets = datasets.filter(
+    (dataset) =>
+      dataset.title.toLowerCase().includes(search.toLowerCase()) ||
+      dataset.description.toLowerCase().includes(search.toLowerCase())
+  );
 
   const [reviews, setReviews] = useState<Review[]>([
     {
@@ -238,70 +246,6 @@ export default function Home() {
     }
   };
 
-  const ReviewCard = ({ review }) => (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-4">
-      <div className="flex justify-between items-start mb-3">
-        <div>
-          <h4 className="text-lg font-bold text-gray-800">{review.title}</h4>
-          <p className="text-sm text-gray-600">
-            {review.reviewer} • {review.date}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="flex items-center text-yellow-500">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className={`w-4 h-4 ${i < Math.floor(review.rating) ? 'fill-current' : ''}`} />
-            ))}
-          </span>
-          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${review.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-            }`}>
-            {review.status === 'published' ? 'Opublikowana' : 'Szkic'}
-          </span>
-        </div>
-      </div>
-      <p className="text-gray-700 mb-4">{review.content}</p>
-      <div className="flex gap-4 text-sm">
-        <button className="flex items-center text-blue-600 hover:text-blue-800">
-          <ThumbsUp className="w-4 h-4 mr-1" />
-          {review.upvotes}
-        </button>
-        <button
-          className="flex items-center text-gray-600 hover:text-gray-800"
-          onClick={() => setSelectedReview(review)}
-        >
-          <MessageSquare className="w-4 h-4 mr-1" />
-          {review.comments} komentarzy
-        </button>
-      </div>
-    </div>
-  );
-
-  const SuggestionCard = ({ suggestion }) => (
-    <div className="bg-white rounded-lg shadow-md p-5 mb-3">
-      <div className="flex justify-between items-start mb-2">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2">
-            <span className={`px-2 py-1 rounded text-xs font-semibold ${suggestion.type === 'error' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
-              }`}>
-              {suggestion.type === 'error' ? 'Błąd' : 'Usprawnienie'}
-            </span>
-            <span className={`px-2 py-1 rounded text-xs font-semibold ${suggestion.status === 'open' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
-              }`}>
-              {suggestion.status === 'open' ? 'Otwarte' : 'Potwierdzone'}
-            </span>
-          </div>
-          <h5 className="font-bold text-gray-800">{suggestion.title}</h5>
-          <p className="text-sm text-gray-600 mb-2">{suggestion.author} • {suggestion.date}</p>
-          <p className="text-gray-700 text-sm">{suggestion.description}</p>
-        </div>
-        <button className="flex items-center text-blue-600 hover:text-blue-800 ml-4">
-          <ThumbsUp className="w-4 h-4 mr-1" />
-          {suggestion.upvotes}
-        </button>
-      </div>
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <header className="bg-white shadow-md">
@@ -356,6 +300,16 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {activeTab === 'datasets' && (
           <div>
+            {/* SEARCH INPUT */}
+            <div className="mb-6 flex">
+              <input
+                type="text"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Szukaj zbioru danych..."
+                className="bg-white px-4 py-2 border border-gray-300 rounded-lg w-full max-w-md"
+              />
+            </div>
             {isLoading ? (
               <div className="flex justify-center items-center py-12">
                 <svg className="animate-spin h-8 w-8 text-indigo-600" viewBox="0 0 24 24">
@@ -378,14 +332,18 @@ export default function Home() {
             ) : (
               <div>
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">Dostępne zbiory danych</h2>
-                {datasets.map(dataset => (
-                  <DatasetCard
-                    key={dataset.id}
-                    dataset={dataset}
-                    setSelectedDataset={setSelectedDataset}
-                    setActiveTab={setActiveTab}
-                  />
-                ))}
+                {filteredDatasets.length === 0 ? (
+                  <div className="text-gray-500">Brak wyników.</div>
+                ) : (
+                  filteredDatasets.map(dataset => (
+                    <DatasetCard
+                      key={dataset.id}
+                      dataset={dataset}
+                      setSelectedDataset={setSelectedDataset}
+                      setActiveTab={setActiveTab}
+                    />
+                  ))
+                )}
               </div>
             )}
           </div>
@@ -471,7 +429,10 @@ export default function Home() {
                 {reviews
                   .filter(r => r.datasetId === selectedDataset.id)
                   .map(review => (
-                    <ReviewCard key={review.id} review={review} />
+                    <ReviewCard
+                      key={review.id}
+                      review={review}
+                      setSelectedReview={setSelectedReview} />
                   ))}
               </div>
 
