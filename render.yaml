@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: ms-02-ui
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: node server.js
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+    autoDeploy: true
+    plan: starter
+    rootDir: .
+    # Jeśli frontend buduje się do innego katalogu, zmień build/client na właściwy
