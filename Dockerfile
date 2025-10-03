@@ -1,22 +1,22 @@
-FROM node:22-alpine AS development-dependencies-env
-COPY . /app
+FROM node:22-alpine AS deps
 WORKDIR /app
+COPY package.json package-lock.json ./
 RUN npm ci
 
-FROM node:22-alpine AS production-dependencies-env
-COPY ./package.json package-lock.json /app/
+FROM node:22-alpine AS build
 WORKDIR /app
-RUN npm ci --omit=dev
-
-FROM node:22-alpine AS build-env
-COPY . /app/
-COPY --from=development-dependencies-env /app/node_modules /app/node_modules
-WORKDIR /app
+COPY . .
+COPY --from=deps /app/node_modules ./node_modules
 RUN npm run build
 
-FROM node:22-alpine
-COPY ./package.json package-lock.json server.js /app/
-COPY --from=production-dependencies-env /app/node_modules /app/node_modules
-COPY --from=build-env /app/build /app/build
+FROM node:22-alpine AS prod
 WORKDIR /app
-CMD ["npm", "run", "start"]
+COPY package.json package-lock.json ./
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=build /app/build ./build
+COPY --from=build /app/server ./server
+COPY --from=build /app/server.js ./server.js
+COPY --from=build /app/server/controllers ./server/controllers
+COPY --from=build /app/app ./app
+COPY --from=build /app/public ./public
+CMD ["node", "server.js"]
