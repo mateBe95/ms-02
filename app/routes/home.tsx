@@ -89,6 +89,19 @@ export default function Home() {
       return res.data.data;
     },
   });
+
+ const { data: datasetSuggestions = [], isLoading: isSuggestionsLoading } = useQuery<Suggestion[]>({
+    queryKey: ['suggestions', selectedDataset?.id],
+    queryFn: async () => {
+      if (!selectedDataset?.id) return [];
+      console.log(selectedDataset.id);
+      const res = await axios.get(`ui/api/suggestions/datasets/${selectedDataset.id}`);
+      setSuggestions(res.data.data);
+      return res.data.data;
+    },
+    enabled: !!selectedDataset?.id, // tylko gdy wybrano zbiór
+  });
+
   const filteredDatasets = datasets.filter(
     (dataset) =>
       dataset.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -161,41 +174,7 @@ export default function Home() {
     }
   ]);
 
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([
-    {
-      id: 1,
-      datasetId: 1,
-      author: 'Piotr Zieliński',
-      title: 'Dodanie checksumów MD5',
-      type: 'improvement',
-      description: 'Proponuję dodanie sum kontrolnych MD5 dla każdego pliku w zbiorze, aby umożliwić weryfikację integralności pobranych danych. To standard w repozytoriach naukowych.',
-      date: '2024-09-18',
-      upvotes: 15,
-      status: 'open'
-    },
-    {
-      id: 2,
-      datasetId: 1,
-      author: 'Katarzyna Nowacka',
-      title: 'Błąd w nazewnictwie kolumn',
-      type: 'error',
-      description: 'W pliku "samples_batch2.csv" kolumna "temprature" powinna być "temperature". Literówka może powodować problemy przy automatycznym przetwarzaniu.',
-      date: '2024-09-22',
-      upvotes: 23,
-      status: 'acknowledged'
-    },
-    {
-      id: 3,
-      datasetId: 1,
-      author: 'Jan Nowicki',
-      title: 'Brakujące informacje o licencji',
-      type: 'improvement',
-      description: 'Zbiór nie zawiera wyraźnej informacji o licencji. Sugeruję dodanie pliku LICENSE z jasnym określeniem warunków użytkowania (np. CC BY 4.0).',
-      date: '2024-09-25',
-      upvotes: 19,
-      status: 'open'
-    }
-  ]);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([])
 
   const handleAddComment = (reviewId) => {
     if (newComment.trim()) {

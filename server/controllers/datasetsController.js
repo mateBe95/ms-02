@@ -1,13 +1,12 @@
 import express from "express";
 import axios from "axios";
+import { getApiBase } from "../utils/getApiBase.js";
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-
   try {
-    // Przykład: pobranie użytkownika z zewnętrznego API
-    const response = await axios.get(`https://ms-02-api.netlify.app/api/datasets`);
+    const response = await axios.get(`${getApiBase()}/datasets`);
     res.json(response.data);
   } catch (error) {
     res.status(500).json({ error: "Nie udało się pobrać danych" });
