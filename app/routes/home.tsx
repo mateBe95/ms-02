@@ -3,7 +3,7 @@ import type { Route } from "./+types/home";
 import { ThumbsUp, MessageSquare, AlertCircle, FileText, User, Star, Send, Edit3 } from 'lucide-react';
 import { DatasetCard } from "~/components/DatasetCard/DatasetCard";
 import axios from "axios";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 export function meta({ }: Route.MetaArgs) {
   return [
     { title: "New React Router App" },
