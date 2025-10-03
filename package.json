@@ -7,7 +7,7 @@
     "dev:client": "react-router dev",
     "dev:server": "node server.js",
     "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
-    "start": "vite preview",
+    "start": "node server.js",
     "preview": "vite preview",
     "typecheck": "react-router typegen && tsc"
   },
