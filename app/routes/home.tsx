@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Route } from "./+types/home";
 import { ThumbsUp, MessageSquare, AlertCircle, FileText, User, Star, Send, Edit3 } from 'lucide-react';
 import { DatasetCard } from "~/components/DatasetCard/DatasetCard";
+import axios from "axios";
+import { useQuery } from "react-query";
 export function meta({ }: Route.MetaArgs) {
   return [
     { title: "New React Router App" },
@@ -77,39 +79,12 @@ export default function Home() {
   const [newComment, setNewComment] = useState('');
   const [newSuggestion, setNewSuggestion] = useState<NewSuggestion>({ title: '', description: '', type: 'improvement' });
   const [newReview, setNewReview] = useState<NewReview>({ title: '', content: '', rating: 5, status: 'draft' });
-
-  const [datasets] = useState<Dataset[]>([
-    {
-      id: 1,
-      title: 'Zbiór danych genomicznych bakterii E. coli',
-      author: 'Dr Anna Kowalska',
-      date: '2024-09-15',
-      reviews: 3,
-      avgRating: 4.2,
-      suggestions: 5,
-      description: 'Kompletny zbiór sekwencji genomowych z 500 próbek bakterii E. coli zebranych w latach 2020-2024 z różnych środowisk.'
+  const { data: datasets = [], isLoading, error } = useQuery<Dataset[]>({
+    queryFn: async () => {
+      const res = await axios.get('ui/api/datasets');
+      return res.data.data;
     },
-    {
-      id: 2,
-      title: 'Dataset klimatyczny - Temperatura Europa 1950-2023',
-      author: 'Prof. Jan Nowak',
-      date: '2024-08-20',
-      reviews: 7,
-      avgRating: 4.8,
-      suggestions: 2,
-      description: 'Dane temperaturowe zebrane z 250 stacji meteorologicznych w całej Europie, zawierające pomiary dzienne oraz miesięczne.'
-    },
-    {
-      id: 3,
-      title: 'Zbiór obrazów medycznych - RTG klatki piersiowej',
-      author: 'Dr Katarzyna Lewandowska',
-      date: '2024-10-01',
-      reviews: 2,
-      avgRating: 4.5,
-      suggestions: 8,
-      description: 'Anonimizowany zbiór 10,000 zdjęć RTG klatki piersiowej z opisami diagnostycznymi, przydatny do trenowania modeli ML.'
-    }
-  ]);
+  });
 
   const [reviews, setReviews] = useState<Review[]>([
     {
@@ -380,15 +355,38 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {activeTab === 'datasets' && (
           <div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Dostępne zbiory danych</h2>
-            {datasets.map(dataset => (
-              <DatasetCard
-                key={dataset.id}
-                dataset={dataset}
-                setSelectedDataset={setSelectedDataset}
-                setActiveTab={setActiveTab}
-              />
-            ))}
+            {isLoading ? (
+              <div className="flex justify-center items-center py-12">
+                <svg className="animate-spin h-8 w-8 text-indigo-600" viewBox="0 0 24 24">
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    fill="none"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  />
+                </svg>
+              </div>
+            ) : (
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">Dostępne zbiory danych</h2>
+                {datasets.map(dataset => (
+                  <DatasetCard
+                    key={dataset.id}
+                    dataset={dataset}
+                    setSelectedDataset={setSelectedDataset}
+                    setActiveTab={setActiveTab}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
 
