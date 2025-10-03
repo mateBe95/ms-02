@@ -80,6 +80,7 @@ export default function Home() {
   const [newSuggestion, setNewSuggestion] = useState<NewSuggestion>({ title: '', description: '', type: 'improvement' });
   const [newReview, setNewReview] = useState<NewReview>({ title: '', content: '', rating: 5, status: 'draft' });
   const { data: datasets = [], isLoading, error } = useQuery<Dataset[]>({
+    queryKey: ['datasets'],
     queryFn: async () => {
       const res = await axios.get('ui/api/datasets');
       return res.data.data;
