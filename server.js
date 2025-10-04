@@ -4,6 +4,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import datasetsController from "./server/controllers/datasetsController.js";
 import suggestionsController from "./server/controllers/suggestionsController.js";
+import reviewsController from "./server/controllers/reviewsController.js";
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -19,6 +21,7 @@ app.use(express.static(path.join(__dirname, "build/client")));
 
 app.use("/ui/api/datasets", datasetsController);
 app.use("/ui/api/suggestions", suggestionsController);
+app.use("/ui/api/reviews", reviewsController);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`BFF running on port ${PORT}`));
