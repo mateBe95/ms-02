@@ -16,7 +16,6 @@ router.get("/", async (req, res) => {
 
 // Sugestie dla zbioru
 router.get("/datasets/:id", async (req, res) => {
-    console.log("elo", req.params.id)
   try {
     const response = await axios.get(`${getApiBase()}/suggestions/datasets/${req.params.id}/suggestions`);
     res.json(response.data);
