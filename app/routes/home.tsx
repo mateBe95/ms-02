@@ -53,7 +53,7 @@ export default function Home() {
 					<div className="flex justify-between items-center">
 						<h1 className="text-3xl font-bold text-indigo-900">
 							<FileText className="inline w-8 h-8 mr-2" />
-							DataReview - System Recenzji Zbiorów Danych
+							Podsystem ewaluacyjny PWNiB
 						</h1>
 						<div className="flex gap-2">
 							<button

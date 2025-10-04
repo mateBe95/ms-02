@@ -64,10 +64,10 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// Upvote recenzji
-router.post("/:id/upvote", async (req, res) => {
+// vote recenzji
+router.post("/:id/vote", async (req, res) => {
   try {
-    const response = await axios.post(`${getApiBase()}/reviews/${req.params.id}/upvote`);
+    const response = await axios.post(`${getApiBase()}/reviews/${req.params.id}/vote`, req.body);
     res.json(response.data);
   } catch (error) {
     res.status(500).json({ error: `Nie udało się zagłosować na recenzję: ${error.message}` });

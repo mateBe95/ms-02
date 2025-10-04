@@ -15,6 +15,8 @@ type NewReview = {
 type Review = {
     title: string;
     reviewer: string;
+    id: string,
+    datasetId: number;
     date: string;
     rating: number;
     status: string;
@@ -27,6 +29,7 @@ const ReviewsSection = ({ userRole, selectedDataset }) => {
     const [newReview, setNewReview] = useState<NewReview>({ title: '', content: '', rating: 5, status: 'draft' });
     const [selectedReview, setSelectedReview] = useState<Review | null>(null);
     const [reviews, setReviews] = useState<Review[]>([]);
+    const [canVote, setCanVote] = useState(true);
 
     const { data: datasetReviews = [], isLoading } = useQuery<Review[]>({
         queryKey: ['reviews', selectedDataset?.id],
@@ -53,6 +56,17 @@ const ReviewsSection = ({ userRole, selectedDataset }) => {
             ]);
         },
     });
+
+    const voteMutation = useMutation({
+        mutationFn: ({ id, type }) => axios.post(`/ui/api/reviews/${id}/vote`, { type }),
+        onSuccess: () => queryClient.invalidateQueries(['reviews']),
+    });
+
+    const handleVote = (id: number, type: 'up' | 'down') => {
+        voteMutation.mutate({ id, type });
+        setCanVote(false);
+        setTimeout(() => setCanVote(true), 10000); // 10 sekund blokady
+    };
 
     useEffect(() => {
         setReviews(datasetReviews);
@@ -93,6 +107,8 @@ const ReviewsSection = ({ userRole, selectedDataset }) => {
                     <ReviewCard
                         key={review.id}
                         review={review}
+                        onVote={handleVote}
+                        canVote={canVote}
                         setSelectedReview={setSelectedReview} />
                 ))}
             {selectedReview && <CommentsSection
