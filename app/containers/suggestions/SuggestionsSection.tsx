@@ -41,6 +41,7 @@ type DatasetCardProps = {
 export const SuggestionsSection: React.FC<DatasetCardProps> = ({ selectedDataset }) => {
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
     const [newSuggestion, setNewSuggestion] = useState<NewSuggestion>({ title: '', description: '', type: 'improvement' });
+    const [canVote, setCanVote] = useState(true);
 
     const { data: datasetSuggestions = [], isLoading } = useQuery<Suggestion[]>({
         queryKey: ['suggestions', selectedDataset?.id],
@@ -67,6 +68,17 @@ export const SuggestionsSection: React.FC<DatasetCardProps> = ({ selectedDataset
             ]);
         },
     });
+
+    const voteMutation = useMutation({
+        mutationFn: ({ id, type }) => axios.post(`/ui/api/suggestions/${id}/vote`, { type }),
+        onSuccess: () => queryClient.invalidateQueries(['suggestions']),
+    });
+
+    const handleVote = (id: number, type: 'up' | 'down') => {
+        voteMutation.mutate({ id, type });
+        setCanVote(false);
+        setTimeout(() => setCanVote(true), 10000); // 10 sekund blokady
+    };
     useEffect(() => {
         setSuggestions(datasetSuggestions);
     }, [datasetSuggestions]);
@@ -108,6 +120,8 @@ export const SuggestionsSection: React.FC<DatasetCardProps> = ({ selectedDataset
                         <SuggestionCard
                             key={suggestion.id}
                             suggestion={suggestion}
+                            onVote={handleVote}
+                            canVote={canVote}
                         />
                     ))
             )}
