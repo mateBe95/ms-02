@@ -65,7 +65,7 @@ const ReviewsSection = ({ userRole, selectedDataset }) => {
     const handleVote = (id: number, type: 'up' | 'down') => {
         voteMutation.mutate({ id, type });
         setCanVote(false);
-        setTimeout(() => setCanVote(true), 10000); // 10 sekund blokady
+        setTimeout(() => setCanVote(true), 3000); // 3 sekund blokady
     };
 
     useEffect(() => {

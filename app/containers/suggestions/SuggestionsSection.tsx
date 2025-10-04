@@ -71,13 +71,13 @@ export const SuggestionsSection: React.FC<DatasetCardProps> = ({ selectedDataset
 
     const voteMutation = useMutation({
         mutationFn: ({ id, type }) => axios.post(`/ui/api/suggestions/${id}/vote`, { type }),
-        onSuccess: () => queryClient.invalidateQueries(['suggestions']),
+        onSuccess: () => queryClient.invalidateQueries(["suggestions"]),
     });
 
     const handleVote = (id: number, type: 'up' | 'down') => {
         voteMutation.mutate({ id, type });
         setCanVote(false);
-        setTimeout(() => setCanVote(true), 10000); // 10 sekund blokady
+        setTimeout(() => setCanVote(true), 3000); // 3 sekundy blokady
     };
     useEffect(() => {
         setSuggestions(datasetSuggestions);

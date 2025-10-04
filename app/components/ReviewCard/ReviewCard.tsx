@@ -44,6 +44,7 @@ export const ReviewCard = ({ review, setSelectedReview, onVote, canVote }: { rev
           hover:bg-blue-100 hover:text-blue-800
           active:bg-blue-200 active:scale-95
           transition-all duration-150
+		    disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400
         ">
 				<ThumbsUp className="w-4 h-4 mr-1" />
 				{review.upvotes}
@@ -56,6 +57,7 @@ export const ReviewCard = ({ review, setSelectedReview, onVote, canVote }: { rev
           hover:bg-red-100 hover:text-red-800
           active:bg-red-200 active:scale-95
           transition-all duration-150
+		    disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400
         "
 			>
 				<ThumbsDown className="w-4 h-4 mr-1" />
