@@ -6,6 +6,7 @@ import CommentForm from "~/forms/CommentForm";
 const CommentsSection = ({ userRole, selectedReview }) => {
     const [newComment, setNewComment] = useState('');
     const [comments, setComments] = useState<Comment>([])
+    const [canVote, setCanVote] = useState(true);
 
     const { data: reviewComments = [], isLoading } = useQuery<Comments[]>({
         queryKey: ['comments', selectedReview?.id],
@@ -33,6 +34,17 @@ const CommentsSection = ({ userRole, selectedReview }) => {
         },
     });
 
+    const voteMutation = useMutation({
+        mutationFn: ({ id, type }) => axios.post(`/ui/api/comments/${id}/vote`, { type }),
+        onSuccess: () => queryClient.invalidateQueries(["comments"]),
+    });
+
+    const handleVote = (id: number, type: 'up' | 'down') => {
+        voteMutation.mutate({ id, type });
+        setCanVote(false);
+        setTimeout(() => setCanVote(true), 3000); // 3 sekundy blokady
+    };
+
     useEffect(() => {
         setComments(reviewComments);
     }, [reviewComments]);
@@ -58,6 +70,8 @@ const CommentsSection = ({ userRole, selectedReview }) => {
                 selectedReview={selectedReview}
                 setNewComment={setNewComment}
                 handleAddComment={handleAddComment}
+                handleVote={handleVote}
+                canVote={canVote}
                 newComment={newComment}
                 comments={comments} />
         </div>

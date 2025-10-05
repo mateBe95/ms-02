@@ -54,4 +54,14 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// Głosowanie komentarzy
+router.post("/:id/vote", async (req, res) => {
+  try {
+    const response = await axios.post(`${getApiBase()}/comments/${req.params.id}/vote`, req.body);
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: `Nie udało się zagłosować na komentarz: ${error.message}` });
+  }
+});
+
 export default router;

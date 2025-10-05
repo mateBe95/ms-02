@@ -1,5 +1,6 @@
 import { Send } from "lucide-react";
 import React from 'react';
+import CommentItem from "~/components/CommentItem/CommentItem";
 
 type Comment = {
     id: number;
@@ -36,6 +37,8 @@ const CommentForm: React.FC<CommentFormProps> = ({
     setNewComment,
     handleAddComment,
     newComment,
+    handleVote,
+    canVote,
     comments }) => {
     return (
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -46,18 +49,11 @@ const CommentForm: React.FC<CommentFormProps> = ({
             {comments
                 .filter(c => c.reviewId === selectedReview.id)
                 .map(comment => (
-                    <div key={comment.id} className="mb-4 pb-4 border-b border-gray-200 last:border-b-0">
-                        <div className="flex items-center gap-2 mb-2">
-                            <span className="font-semibold text-gray-800">{comment.author}</span>
-                            {comment.isReviewer && (
-                                <span className="px-2 py-1 bg-indigo-100 text-indigo-800 text-xs rounded-full">
-                                    Recenzent
-                                </span>
-                            )}
-                            <span className="text-sm text-gray-500">{comment.date}</span>
-                        </div>
-                        <p className="text-gray-700">{comment.content}</p>
-                    </div>
+                    <CommentItem
+                        onVote={handleVote}
+                        canVote={canVote}
+                        key={comment.id}
+                        comment={comment} />
                 ))}
 
             <div className="mt-4">
